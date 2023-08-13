@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Resume Maker</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+  /* Shared CSS styles */
+  body {
+    font-family: 'Open Sans', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #ffffff;
+  }
+
+  .container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .flip-card {
+    width: 300px;
+    height: 300px;
+    perspective: 1000px;
+    border-radius: 10px;
+    box-shadow: 0 10px 15px rgba(255, 255, 255, 0.2);
+  }
+
+  .flip-card-inner {
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.5s;
+  }
+
+  .flip-card.flipped .flip-card-inner {
+    transform: rotateY(180deg);
+  }
+
+  .flip-card-front, .flip-card-back {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    backface-visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .flip-card-front {
+    background: url('https://firebasestorage.googleapis.com/v0/b/encored-1031f.appspot.com/o/image-removebg-preview%20(19).png?alt=media&token=69fb568c-ae42-4764-989b-b263954f5525') center/cover no-repeat;
+  }
+
+  .flip-card-back {
+    background: url('https://firebasestorage.googleapis.com/v0/b/encored-1031f.appspot.com/o/image-removebg-preview%20(16).png?alt=media&token=fd90dd52-a26f-4d3d-8485-c34131b8ecdf') center/cover no-repeat;
+    transform: rotateY(180deg);
+  }
+
+  .get-started-button {
+    padding: 10px 20px;
+    background-color: #000000;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .get-started-button:hover {
+    background-color: #ffe600;
+  }
+
+  .info {
+    max-width: 300px;
+    text-align: left;
+  }
+
+  /* Specific CSS styles */
+  .counter {
+    color: #fff;
+    font-family: 'Space Grotesk', sans-serif;
+    text-align: center;
+    width: 190px;
+    padding: 0 15px 15px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .counter:before,
+  .counter:after {
+    content: '';
+    background-color: #fff;
+    border-radius: 0 0 30px 30px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    z-index: -1;
+  }
+
+  .counter:after {
+    background: linear-gradient(var(--color2), var(--color1));
+    height: 93px;
+    border-radius: 0 0 150px 150px;
+    bottom: auto;
+  }
+
+  .counter .counter-value {
+    color: #fff;
+    background: linear-gradient(var(--color1), var(--color2));
+    font-size: 35px;
+    font-weight: 700;
+    line-height: 150px;
+    width: 150px;
+    height: 150px;
+    margin: 0 auto 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .counter h3 {
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    line-height: 25px;
+    text-transform: capitalize;
+    margin: 0;
+  }
+
+  .counter.purple {
+    --color1: #f32626;
+    --color2: #8b0000;
+  }
+
+  .counter.green {
+    --color1: #06CFB4;
+    --color2: #00778B;
+  }
+
+  .counter.red {
+    --color1: #f32626;
+    --color2: #8b0000;
+  }
+
+  @media screen and (max-width: 990px) {
+    .counter {
+      margin-bottom: 40px;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="flip-card">
+    <div class="flip-card-inner">
+      <div class="flip-card-front">
+        <img src="https://firebasestorage.googleapis.com/v0/b/encored-1031f.appspot.com/o/image-removebg-preview%20(19).png?alt=media&token=69fb568c-ae42-4764-989b-b263954f5525" alt="AI Resume Maker" style="max-width: 100%; max-height: 100%;">
+      </div>
+      <div class="flip-card-back">
+        <button class="get-started-button" onclick="openResumeBuilder()">Get Started</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="info">
+    <h1>AI Resume Maker</h1>
+    <p>Create personalized and optimized resumes with AI precision. Showcase your skills, achievements, and potential. Get noticed by employers in a competitive job market.</p>
+    <div class="counter purple">
+      <h3>Resumes Made</h3>
+      <span class="counter-value" id="resumeCountMobile">100</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  let resumeCount = parseInt(localStorage.getItem('resumeCount')) || 0;
+  let clickCount = parseInt(localStorage.getItem('clickCount')) || 0;
+
+  function updateResumeCount() {
+    resumeCount = clickCount; // Update the count based on the click count
+    localStorage.setItem('resumeCount', resumeCount.toString());
+    document.getElementById('resumeCountMobile').textContent = resumeCount;
+  }
+
+  function openResumeBuilder() {
+    clickCount++;
+    localStorage.setItem('clickCount', clickCount.toString());
+    updateResumeCount();
+    window.open('https://encored-resumebuilder.onrender.com/', '_blank');
+  }
+
+  // On page load, set the initial value from local storage
+  window.addEventListener('load', () => {
+    document.getElementById('resumeCountMobile').textContent = resumeCount;
+  });
+
+  // Prevent counting the flip on click
+  const flipCard = document.querySelector('.flip-card');
+  flipCard.addEventListener('click', (event) => {
+    if (!event.target.classList.contains('get-started-button')) {
+      flipCard.classList.toggle('flipped');
+    }
+  });
+
+  // Update the counter value when the page loads
+  updateResumeCount();
+</script>
+</body>
+</html>
